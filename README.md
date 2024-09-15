@@ -26,3 +26,11 @@ Just one user, no account, no login
 - [ ] if balance is zero, print "Não foram realizadas movimentações"
 - [x] format should be: R$ xxx.xx
 
+# Challenge 2: Timestamps
+## Date: 2022-10-26
+
+### Transactions Limit
+- [] Transactions limit per day should be 10
+- [] An Alert if user has exceeded transactions limit
+- [] Balance must show the timestamp (date and hour) of the all transactions
+
