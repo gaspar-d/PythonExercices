@@ -1,0 +1,79 @@
+name: Build Application 📦
+
+run-name: Build & Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment"
+        required: true
+        default: "Homolog"
+        type: choice
+        options:
+          - develop
+          - release
+          - DebugProd
+          - Homolog
+          - HomologDocker
+      docker-url: # New input for Docker URL, optional by default but required if HomologDocker is selected
+        description: "Docker URL (required for HomologDocker)"
+        required: false  # Optional but validated later
+        type: string
+      app-package:
+        description: "Create .app"
+        required: true
+        default: "NO"
+        type: choice
+        options:
+          - "YES"
+          - "NO"
+      schema:
+        description: "Scheme"
+        required: true
+        type: choice
+        default: "##############Company name"
+        options:
+          - "##############Company name"
+          - "##############Company name2"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.schema }}-${{ inputs.environment }}
+  cancel-in-progress: true
+
+jobs:
+  validate-docker-url: # New job to validate if Docker URL is provided when HomologDocker is selected
+    if: ${{ github.event.inputs.environment == 'HomologDocker' }} # Only run this job if the environment is 'HomologDocker'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Docker URL
+        run: |
+          if [ -z "${{ github.event.inputs['docker-url'] }}" ]; then
+            echo "Error: Docker URL is required for the HomologDocker environment."
+            exit 1
+          else
+            echo "Docker URL: ${{ github.event.inputs['docker-url'] }}"
+          fi
+
+  build:
+    needs: [validate-docker-url]  # Make the build depend on Docker URL validation if HomologDocker is selected
+    uses: url/##############
+    with:
+      environment: dev
+      build-configuration: ${{ github.event.inputs.environment }}
+      dispatch-scheme-name: ${{ github.event.inputs.schema }}
+      docker-url: ${{ github.event.inputs['docker-url'] || 'https://default.docker.url' }} # Pass the Docker URL or use a default one
+    secrets: inherit
+
+  create-app-package:
+    if: ${{ github.event.inputs.app-package == 'YES' }}
+    uses: url/##############
+    secrets: inherit
+
+  cd:
+    needs: [build]
+    uses: url/##############
+    with:
+      deploy-matrix: ${{ needs.build.outputs.deploy-matrix }}
+      is-sample: false
+      os-name: ios

@@ -1,10 +1,35 @@
 import datetime as dt
-from typing import Dict, Union
+
+menu = """
+Choose an option: 
+[D]eposit 
+[W]ithdraw
+[B]alance
+[CA]create account
+[CU]create user
+[LA]ist accounts
+[LU]list users
+[Q]uit
+"""
 
 balance = 0
 counter = 0
 DAILY_TRANSACTION_LIMIT = 10
-transactions: Dict[int, Dict[str, Union[str, float | dt.datetime]]] = {}
+transactions: dict[int, dict[str, float | dt.datetime]] = {}
+
+user = {}
+user_counter: int
+
+
+def create_user(name: str, birthday: str, person_ID: str, address: str):
+    pass
+
+
+def create_account(agency: str, account_number: str, user: dict[str, str]):
+    pass
+
+
+## NOTE - Transactional functions
 
 
 def transactions_record(option: str, amount: float, date: dt.datetime) -> bool:
@@ -85,9 +110,11 @@ def balance_handler(balance: float) -> float:
     return balance
 
 
+## NOTE - Main program
+
 while True:
-    print("=================================")
-    option = input("Choose an option: [D]eposit, [W]ithdraw, [B]alance, [Q]uit \n: ")
+    print("=" * 70)
+    option = input(f"{menu}\n-> ")
     if option.lower() == "d":
         balance = deposit_handler(balance)
 
@@ -95,10 +122,25 @@ while True:
         balance = withdraw_handler(balance)
 
     elif option.lower() == "b":
+        print("=" * 70)
+        print("Transactions:")
         balance = balance_handler(balance)
+
+    elif option.lower() == "ca":
+        pass
+
+    elif option.lower() == "cu":
+        pass
+
+    elif option.lower() == "la":
+        pass
+
+    elif option.lower() == "lu":
+        pass
 
     elif option.lower() == "q":
         print("\33[96mService terminated. \nHave a nice day.\33[0m")
         break
+
     else:
-        print("\033[31m!!!Invalid Option!!!\033[0m")
+        print("\033[1;31;43m!!!Invalid Option!!!\033[0m")

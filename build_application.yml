@@ -1,0 +1,60 @@
+name: Build Application 📦
+
+run-name: Build & Deploy
+
+on:
+  workflow_dispatch:
+    input:
+      environment:
+        description: "Environment"
+        required: true
+        default: "Homolog"
+        type: choice
+        options:
+          - develop
+          - release
+          - DebugProd
+          - Homolog
+          - HomologDocker
+      app-package:
+        description: "Create .app"
+        require: true
+        default: "NO"
+        type: choice
+        options:
+          - "YES"
+          - "NO"
+      schema:
+      description: "Scheme"
+      required: true
+      type: choice
+      default: "##############Company name"
+      options:
+        - "##############Company name"
+        - "##############Company name2"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.scheme }}-${{ inputs.environment }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: url/##############
+    with:
+      environment: dev
+      build-configuration: ${{ inputs.environment }}
+      dispatch-scheme-name: ${{ inputs.scheme }}
+    secrets: inherit
+
+  create-app-package:
+    if: ${{ github.event.inputs.app-package == 'YES' }}
+    uses: url/##############
+    secrets: inherit
+
+  cd:
+    needs: [build]
+    uses: url/##############
+    with:
+      deploy-matrix: ${{ needs.build.outputs.deploy-matrix }}
+      is-sample: false
+      os-name: ios
