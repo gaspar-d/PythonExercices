@@ -36,10 +36,11 @@ Just one user, no account, no login
 obs - didn't know it was the challenge and already did the refactor of the logic into separated functions on Challenge 2
 
 - [x] separate deposit, withdraw and balance logic into functions
-- [] create function create user
-- [] create function create bank account
+- [x] create function create user
+- [x] create function create bank account
 - Optional
-- [] create function to list Accounts or Users
+- [x] create function to list Accounts or Users
+- [] create func to list how many accounts each user has
 
 User: Dictionary (can't have two users with same person_ID)
     name: str
@@ -53,6 +54,6 @@ Account: Dictionary
     user: User
 
 - Constraints
-Can't have accounts without user 
-Only one account per person_ID
-One user can have multiple accounts
+- [X] Can't have accounts without user 
+- [ ] Only one account per person_ID
+- [ ] One user can have multiple accounts
