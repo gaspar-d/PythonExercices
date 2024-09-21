@@ -1,43 +1,9 @@
-# Lab to test code before put it in production
-# remember to copy global variables to code base
-
 import re
 
 users: dict[int, dict[str, str]] = {}
 accounts: dict[int, dict[str, str | None]] = {}
 user_counter = 0
 account_counter = 0
-
-
-# For testing and debugging
-# users = {
-#     1: {
-#         "name": "John",
-#         "birthday": "01/01/2000",
-#         "person_ID": "1234",
-#         "address": "123 Main St",
-#     },
-#     2: {
-#         "name": "Jane",
-#         "birthday": "02/02/2000",
-#         "person_ID": "4567",
-#         "address": "456 Main St",
-#     },
-# }
-
-# accounts = {
-#     1: {
-#         "agency": "0001",
-#         "account_number": "1",
-#         "user": users[1].get("person_ID"),
-#     },
-#     2: {
-#         "agency": "0001",
-#         "account_number": "2",
-#         "user": users[2].get("person_ID"),
-#     },
-# }
-
 
 def validate_birthday(date_str: str):
     pattern = r"^(\d{2})[\/\-]?(\d{2})[\/\-]?(\d{4})$"
@@ -201,9 +167,6 @@ def list_accounts():
                 else:
                     account_owners[name] = [account_number]
                     
-                # print(f"The account number {account.get("account_number")} belongs to user {user.get("name")}")
-                # print(f"This is the new list: {account_owners}")
-    
     for name, account_numbers in account_owners.items():
         print(f"User \033[34m{name}\033[0m owns:")
         for account_number in account_numbers:

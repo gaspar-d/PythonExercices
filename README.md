@@ -40,7 +40,7 @@ obs - didn't know it was the challenge and already did the refactor of the logic
 - [x] create function create bank account
 - Optional
 - [x] create function to list Accounts or Users
-- [] create func to list how many accounts each user has
+- [X] create func to list how many accounts each user has
 
 User: Dictionary (can't have two users with same person_ID)
     name: str
@@ -55,5 +55,5 @@ Account: Dictionary
 
 - Constraints
 - [X] Can't have accounts without user 
-- [ ] Only one account per person_ID
-- [ ] One user can have multiple accounts
+- [X] Only one account per person_ID
+- [X] One user can have multiple accounts

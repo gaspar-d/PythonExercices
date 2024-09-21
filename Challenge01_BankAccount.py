@@ -3,7 +3,7 @@ import CreateUserAndAccount as cua
 
 menu = """
 Choose an option: 
-[\033[32mD\033[0m]eposit 
+[\033[32mD\033[0m]eposit
 [\033[32mW\033[0m]ithdraw
 [\033[32mB\033[0m]alance
 [\033[32mCA\033[0m]create account
@@ -138,3 +138,4 @@ def main():
 
 # NOTE - Calling main
 main()
+
