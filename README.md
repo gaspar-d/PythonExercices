@@ -57,3 +57,9 @@ Account: Dictionary
 - [X] Can't have accounts without user 
 - [X] Only one account per person_ID
 - [X] One user can have multiple accounts
+
+# Challenge 4: Refactor using OOP
+
+- [] transform logic into classes
+- [] use interfaces when possible
+- [] create tests ?!?!?! maybe it's a good one.

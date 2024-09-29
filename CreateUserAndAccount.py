@@ -5,6 +5,7 @@ accounts: dict[int, dict[str, str | None]] = {}
 user_counter = 0
 account_counter = 0
 
+
 def validate_birthday(date_str: str):
     pattern = r"^(\d{2})[\/\-]?(\d{2})[\/\-]?(\d{4})$"
 
