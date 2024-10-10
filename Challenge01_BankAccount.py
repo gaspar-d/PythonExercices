@@ -1,26 +1,19 @@
 import datetime as dt
-import CreateUserAndAccount as cua
+from CreateUserAndAccount import Account as cua
 
-menu = """
-Choose an option: 
-[\033[32mD\033[0m]eposit
-[\033[32mW\033[0m]ithdraw
-[\033[32mB\033[0m]alance
-[\033[32mCA\033[0m]create account
-[\033[32mCU\033[0m]create user
-[\033[32mLA\033[0m]ist accounts
-[\033[32mLU\033[0m]list users
-[\033[31mQ\033[0m]uit
-"""
-
-balance = 0
-counter = 0
-DAILY_TRANSACTION_LIMIT = 10
-transactions: dict[int, dict[str, float | dt.datetime]] = {}
+Balance = float
+Transaction = dict[str, float | dt.datetime]
+Balance_and_Transaction = tuple[Balance, Transaction]
 
 
-def transactions_record(option: str, amount: float, date: dt.datetime) -> bool:
-    global counter
+def transactions_record(
+    option: str,
+    amount: float,
+    date: dt.datetime,
+) -> bool:
+    counter = 0
+    DAILY_TRANSACTION_LIMIT = 10
+
     counter += 1
     today = dt.date.today()
     if option.lower() == "d":
@@ -28,36 +21,38 @@ def transactions_record(option: str, amount: float, date: dt.datetime) -> bool:
             print("\033[31mExceeded daily transaction limit of 10\033[0m")
             return False
         else:
-            transactions[counter] = {"amount": amount, "date": date}
             return True
     elif option.lower() == "w":
         if today and counter > DAILY_TRANSACTION_LIMIT:
             print("\033[31mExceeded daily transaction limit of 10\033[0m")
             return False
         else:
-            transactions[counter] = {"amount": -(amount), "date": date}
             return True
     else:
         return False
 
 
-def deposit_handler(balance: float) -> float:
+def deposit_handler(balance: float) -> Balance_and_Transaction:
+    new_transactions: dict[str, float | dt.datetime] = {}
     try:
         deposit = float(input("Enter the amount to deposit: "))
         if deposit < 1:
             print("\033[33mDeposit must be greater than 0\033[0m")
         else:
             date = dt.datetime.now()
-            if transactions_record("d", deposit, date):
+            willRecord = transactions_record("d", deposit, date)
+            if willRecord:
                 balance += deposit
+                new_transactions = {"amount": deposit, "date": date}
                 print(f"Deposited: R$ \033[32m{deposit}\033[0m")
-        return balance
+        return (balance, new_transactions)
     except ValueError:
         print("\033[33mDeposit must be a number\033[0m")
-        return balance
+        return (balance, new_transactions)
 
 
-def withdraw_handler(balance: float) -> float:
+def withdraw_handler(balance: float) -> Balance_and_Transaction:
+    new_transactions: dict[str, float | dt.datetime] = {}
     try:
         withdraw = float(input("Enter the amount to withdraw: "))
         if withdraw < 1:
@@ -69,18 +64,25 @@ def withdraw_handler(balance: float) -> float:
                 print("\033[32mBalance is insufficient\033[0m")
             else:
                 date = dt.datetime.now()
-                if transactions_record("w", withdraw, date):
+                willRecord = transactions_record("w", withdraw, date)
+                if willRecord:
                     balance -= withdraw
+                    new_transactions = {"amount": -(withdraw), "date": date}
                     print(f"Withdrawn: R$ \033[31m{withdraw}\033[0m")
-        return balance
+        return (balance, new_transactions)
     except ValueError:
         print("\033[33mWithdraw must be a number\033[0m")
-        return balance
+        return (balance, new_transactions)
 
 
-def balance_handler(balance: float) -> float:
+def balance_handler(
+    balance: float, transactions: dict[int, dict[str, float | dt.datetime]]
+) -> float:
     for transaction in transactions.values():
-        amount = transaction["amount"]
+        amount = transaction.get("amount")
+        if amount is None:
+            continue
+
         date = transaction["date"]
         if isinstance(amount, float) and amount > 0:
             if isinstance(date, dt.datetime):
@@ -101,32 +103,63 @@ def balance_handler(balance: float) -> float:
 
 
 def main():
-    global balance
+    menu = """
+        Choose an option: 
+        [\033[32mD\033[0m]eposit
+        [\033[32mW\033[0m]ithdraw
+        [\033[32mB\033[0m]alance
+        [\033[32mCA\033[0m]create account
+        [\033[32mCU\033[0m]create user
+        [\033[32mLA\033[0m]ist accounts
+        [\033[32mLU\033[0m]list users
+        [\033[31mQ\033[0m]uit
+    """
+
+    balance = 0
+    transactions: dict[int, dict[str, float | dt.datetime]] = {}
+
+    # from CreateUserAccount class
+    users: dict[int, dict[str, str]] = {}
+    accounts: dict[int, dict[str, str]] = {}
+    user_counter = 0
+    account_counter = 0
+
+    # global balance
     while True:
         print("=" * 70)
         option = input(f"{menu}\n-> ")
         if option.lower() == "d":
-            balance = deposit_handler(balance)
+            balance, new_transaction = deposit_handler(balance)
+            trans_number = len(transactions) + 1
+            transactions[trans_number] = new_transaction
 
         elif option.lower() == "w":
-            balance = withdraw_handler(balance)
+            balance, new_transaction = withdraw_handler(balance)
+            trans_number = len(transactions) + 1
+            transactions[trans_number] = new_transaction
 
         elif option.lower() == "b":
             print("=" * 70)
             print("Transactions:")
-            balance = balance_handler(balance)
+            balance = balance_handler(balance, transactions)
 
         elif option.lower() == "ca":
-            cua.create_account()
+            new_account = cua.create_account(users, accounts, account_counter)
+            if new_account is not None:
+                account_counter += 1
+                accounts[account_counter] = new_account
 
         elif option.lower() == "cu":
-            cua.create_user()
+            new_users = cua.create_user(users, user_counter)
+            if new_users is not None:
+                user_counter += 1
+                users[user_counter] = new_users
 
         elif option.lower() == "la":
-            cua.list_accounts()
+            cua.list_accounts(users, accounts)
 
         elif option.lower() == "lu":
-            cua.list_users()
+            cua.list_users(users)
 
         elif option.lower() == "q":
             print("\33[96mService terminated. \nHave a nice day.\33[0m")
