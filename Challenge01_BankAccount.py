@@ -2,6 +2,7 @@ import datetime as dt
 from CreateUserAndAccount import Account as cua
 from colors import *
 
+# These Types are just for testing global behaviour
 Balance = float
 Transaction = dict[str, float | dt.datetime]
 Balance_and_Transaction = tuple[Balance, Transaction]
@@ -64,7 +65,9 @@ def withdraw_handler(balance: float) -> Balance_and_Transaction:
         return (balance, new_transactions)
 
 
-def balance_handler(balance: float, transactions: dict[int, dict[str, float | dt.datetime]]) -> float:
+def balance_handler(
+    balance: float, transactions: dict[int, dict[str, float | dt.datetime]]
+) -> float:
     for transaction in transactions.values():
         amount = transaction.get("amount")
         if amount is None:
@@ -73,10 +76,14 @@ def balance_handler(balance: float, transactions: dict[int, dict[str, float | dt
         date = transaction["date"]
         if isinstance(amount, float) and amount > 0:
             if isinstance(date, dt.datetime):
-                print(f"R$ {BRIGHT_GREEN}{transaction['amount']:10.2f}{RESET} : {date.strftime('%d/%m/%Y %H:%M:%S')}")
+                print(
+                    f"R$ {BRIGHT_GREEN}{transaction['amount']:10.2f}{RESET} : {date.strftime('%d/%m/%Y %H:%M:%S')}"
+                )
         elif isinstance(amount, float) and amount < 0:
             if isinstance(date, dt.datetime):
-                print(f"R$ {BRIGHT_RED}{transaction['amount']:10.2f}{RESET} : {date.strftime('%d/%m/%Y %H:%M:%S')}")
+                print(
+                    f"R$ {BRIGHT_RED}{transaction['amount']:10.2f}{RESET} : {date.strftime('%d/%m/%Y %H:%M:%S')}"
+                )
 
     print(f"Balance: R$ {BRIGHT_BLUE}{balance:.2f}{RESET}\n")
     return balance
@@ -125,13 +132,13 @@ def main():
             balance = balance_handler(balance, transactions)
 
         elif option.lower() == "ca":
-            new_account = cua.create_account(users, accounts, account_counter)
+            new_account = cua.create_account(users, account_counter)
             if new_account is not None:
                 account_counter += 1
                 accounts[account_counter] = new_account
 
         elif option.lower() == "cu":
-            new_users = cua.create_user(users, user_counter)
+            new_users = cua.create_user(users)
             if new_users is not None:
                 user_counter += 1
                 users[user_counter] = new_users
